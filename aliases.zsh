@@ -1,16 +1,17 @@
 # SHELL
 
-alias "$"=''
+alias "$"=''  # Useful for ignoring the `$` when copy-pasting certain commands from the web
 
-alias al='nano ~/.oh-my-zsh/custom/aliases.zsh'
-alias rc='nano ~/.zshrc'
-alias refresh='source ~/.zshrc'
-alias p10krc='nano ~/.p10k.zsh'
+alias al='nano ~/.oh-my-zsh/custom/aliases.zsh'  # Edit the aliases file
+alias rc='nano ~/.zshrc'  # Edit the shell config file
+alias refresh='source ~/.zshrc'  # Refresh the shell after editing one of the above files
+alias p10krc='nano ~/.p10k.zsh'  # Edit the Powerlevel10k config file
 
 # UTILITY
 
-alias commands='nano ~/Downloads/UbuntuApps/COMMANDS.txt'
+alias commands='nano ~/Downloads/UbuntuApps/COMMANDS.txt'  # To keep track of installed apt packages
 
+# Shortcut to `cd` then `ls`
 cdls() {
     local dir="$1"
     local dir="${dir:=$HOME}"
@@ -21,20 +22,21 @@ cdls() {
     fi
 }
 
-alias dc='docker compose'
+alias dc='docker compose'  # Docker Compose
 
-alias autoclicker='xdotool click --repeat 1000 --delay 10 1'
+alias autoclicker='xdotool click --repeat 1000 --delay 10 1'  # Clicks 1000 times with a delay of 10ms between each click
 
-alias xclip='xclip -selection c'
+alias xclip='xclip -selection c'  # Remap xclip to copy to clipboard instead of primary selection
 
-alias tech='cd ~/Tech'
+alias tech='cd ~/Tech'  # Shortcut to Tech directory
 
-alias piserver='ssh -J serveo.net krishnan@krishnans2006'
+alias piserver='ssh -J serveo.net krishnan@krishnans2006'  # SSH into my Raspberry Pi server, proxied through serveo.net
 
 # TJUAV
 
-alias tjuav='cd ~/Tech/TJUAV/'
+alias tjuav='cd ~/Tech/TJUAV/'  # Shortcut to TJUAV directory
 
+# Run an ArduPilot SITL simulation
 tjuav-sim() {
     if [ "$1" != "" ]
     then
@@ -44,23 +46,26 @@ tjuav-sim() {
     fi
 }
 
+# Start the TJUAV backend server
 tjuav-server() {
     cd ~/Tech/TJUAV/GroundStation/server/
     source ~/Tech/TJUAV/GroundStation/server/venv/bin/activate
     python ~/Tech/TJUAV/GroundStation/server/app.py
 }
 
-alias tjuav-client='npm start --prefix ~/Tech/TJUAV/GroundStation/client'
-alias mission-planner='mono ~/Tech/TJUAV/MissionPlanner/MissionPlanner.exe'
+alias tjuav-client='npm start --prefix ~/Tech/TJUAV/GroundStation/client'  # Start the TJUAV frontend client
+alias mission-planner='mono ~/Tech/TJUAV/MissionPlanner/MissionPlanner.exe'  # Start Mission Planner
 
 # tjCSL
 
-alias tjcsl='cd ~/Tech/tjCSL/'
+alias tjcsl='cd ~/Tech/tjCSL/'  # Shortcut to tjCSL directory
 
+# Decrypt a passcard and print it to the terminal (primarily for piping to other commands)
 raw-passcard() {
     gpg -d ~/Tech/tjCSL/keybase-passcard/passwords/"$1".txt.gpg 2>/dev/null
 }
 
+# Decrypt a passcard, copy it, and optionally print it to the terminal (primarily for shell usage)
 passcard() {
     password=$(gpg -d ~/Tech/tjCSL/keybase-passcard/passwords/"$1".txt.gpg 2>/dev/null)
     echo "$password" | xclip
@@ -70,16 +75,19 @@ passcard() {
     fi
 }
 
+# Get a kerberos ticket, using the saved kerberos password
 kb() {
     pass tjcsl/kerberos | kinit 2024kshankar/root
     echo kinit as 2024kshankar/root complete!
 }
 
+# SSH into the tjCSL's remote access server, using the saved kerberos password
 tjras() {
     export SSHPASS=$(pass tjcsl/kerberos)
     sshpass -e ssh "$@" 2024kshankar@ras2.tjhsst.edu
 }
 
+# SSH into any *.csl.tjhsst.edu server intelligently (using passcards, kerberos, proxying, etc.)
 tjssh() {
     CSL_USERNAME="2024kshankar"
     PASSCARD_DIR="/home/krishnan/Tech/tjCSL/keybase-passcard"
@@ -146,6 +154,7 @@ tjssh() {
     fi
 }
 
+# Run a tjCSL ansible playbook intelligently (using ssh passcards, vault password files, etc.)
 tjans() {
     ANSIBLE_DIR="/home/krishnan/Tech/tjCSL/ansible"
     TEMP_FILE="/home/krishnan/.ansible-playbook-runner.sh"
@@ -183,8 +192,10 @@ tjans() {
     ansible-playbook "$ANSIBLE_DIR"/"$1".yml -i "$ANSIBLE_DIR"/hosts -e "pass=$SSHPASS" --vault-password-file "$TEMP_FILE" -f "$NUM_FORKS" -u "$CONNECT_USER" "${@:4}"
 }
 
+# Quickly deploy tin using the ansible playbook
 deploy-tin() {
     tjans tin tin tin -t tin-django
 }
 
+# DEPRECATED: Connect to the tjCSL's openvpn server
 alias tjovpn='sudo openvpn ~/Tech/tjCSL/2024kshankar.ovpn'
