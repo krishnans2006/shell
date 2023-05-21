@@ -31,6 +31,7 @@ alias xclip='xclip -selection c'  # Remap xclip to copy to clipboard instead of 
 alias tech='cd ~/Tech'  # Shortcut to Tech directory
 
 alias piserver='ssh -J serveo.net krishnan@krishnans2006'  # SSH into my Raspberry Pi server, proxied through serveo.net
+alias piserver-local='ssh krishnan@piserver.local'
 
 # TJUAV
 
