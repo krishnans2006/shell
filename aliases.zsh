@@ -22,6 +22,58 @@ cdls() {
     fi
 }
 
+alias indent="sed 's/^/  /'"
+
+git-all() {
+    base_dir="/home/krishnan"
+    regex="$base_dir/[^.].*/\.git"
+
+    found=$(find "$base_dir" -regex "$regex" -type d)
+    disp=""
+
+    while test "$#" -gt 0
+    do
+        case "$1" in
+            -h | --help)
+                echo "usage: git-all [OPTIONS]..."
+                echo Fetch all known git repositories recursively
+                echo
+                echo "  -a, --all       Include git repositories in hidden directories within the base directory"
+                echo "  -v, --verbose   List all git repositories being fetched"
+                return
+                ;;
+            -a | --all)
+                echo Note: Checking hidden directories
+                echo
+                regex="$base_dir/.*/\.git"
+                ;;
+            -v | --verbose)
+                disp="true"
+                ;;
+            --*)
+                echo Bad Option "$1"
+                ;;
+        esac
+        shift
+    done
+
+    found=$(find "$base_dir" -regex "$regex" -type d)
+
+    if [ "$disp" = "true" ]
+    then
+        echo Fetching:
+        echo $found | indent
+        echo
+    fi
+
+    echo $found |
+    while read -r d
+    do
+        echo $d
+        git --git-dir=$d --work-tree=$d/.. fetch --all --recurse-submodules --quiet
+    done | tqdm --total $(echo $found | wc -l) >> /dev/null
+}
+
 alias dc='docker compose'  # Docker Compose
 
 alias autoclicker='xdotool click --repeat 1000 --delay 10 1'  # Clicks 1000 times with a delay of 10ms between each click
