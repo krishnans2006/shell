@@ -81,6 +81,7 @@ alias autoclicker='xdotool click --repeat 1000 --delay 10 1'  # Clicks 1000 time
 alias xclip='xclip -selection c'  # Remap xclip to copy to clipboard instead of primary selection
 
 alias tech='cd ~/Tech'  # Shortcut to Tech directory
+alias hobby='cd ~/Tech/Hobby'
 
 alias piserver='ssh -J serveo.net krishnan@krishnans2006'  # SSH into my Raspberry Pi server, proxied through serveo.net
 alias piserver-local='ssh krishnan@piserver.local'
