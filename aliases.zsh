@@ -35,7 +35,7 @@ git-all() {
     do
         case "$1" in
             -h | --help)
-                echo "usage: git-all [OPTIONS]..."
+                echo "usage: git-all [options]..."
                 echo Fetch all known git repositories recursively
                 echo
                 echo "  -a, --all       Include git repositories in hidden directories within the base directory"
@@ -225,7 +225,7 @@ tjans() {
         return
     fi
 
-    if [[ "$PLAY" != "-h"* ]]
+    if [[ "$PLAY" != "-h" ]] && [[ "$PLAY" != "--help" ]]
     then
         shift
     fi
@@ -237,6 +237,14 @@ tjans() {
         case $1 in
             -h | --help)
                 echo "usage: tjans (playbook) [options]..."
+                echo Run a tjCSL ansible play intelligently
+                echo
+                echo "  -p, --pass PASS                 Specify the name of the passcard file to use when connecting"
+                echo "  -v, --vault, --vault-pass PASS  Specify the name of the vault passcard file (excluding \"_vault\") to use"
+                echo "  -u, --user USERNAME             Specify the username to connect with"
+                echo "  -f, --forks N                   Set the number of concurrent processes to use at once"
+                echo
+                echo "  ...any other valid ansible-playbook options are also permitted and will be passed to ansible"
                 return
                 ;;
             -p | --pass)
