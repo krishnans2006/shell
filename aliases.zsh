@@ -18,7 +18,7 @@ cdls() {
     if [[ -d "$dir" ]]; then
         cd "$dir" >/dev/null; ls
     else
-        echo cdls: no such directory: $dir
+        echo cdls: no such directory: "$dir"
     fi
 }
 
@@ -62,16 +62,16 @@ git-all() {
     if [ "$disp" = "true" ]
     then
         echo Fetching:
-        echo $found | indent
+        echo "$found" | indent
         echo
     fi
 
-    echo $found |
+    echo "$found" |
     while read -r d
     do
-        echo $d
-        git --git-dir=$d --work-tree=$d/.. fetch --all --recurse-submodules --quiet
-    done | tqdm --total $(echo $found | wc -l) >> /dev/null
+        echo "$d"
+        git --git-dir="$d" --work-tree="$d"/.. fetch --all --recurse-submodules --quiet
+    done | tqdm --total $(echo "$found" | wc -l) >> /dev/null
 }
 
 alias dc='docker compose'  # Docker Compose
