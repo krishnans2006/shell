@@ -212,43 +212,81 @@ tjssh() {
 tjans() {
     ANSIBLE_DIR="/home/krishnan/Tech/tjCSL/ansible"
     TEMP_FILE="/home/krishnan/.ansible-playbook-runner.sh"
+
     NUM_FORKS="100"
     CONNECT_USER="root"
-
     PLAY="$1"
-    if [[ "$1" == "" ]]
+    SSH_PASS_NAME=""
+    VAULT_PASS_NAME="ansible"
+
+    if [[ "$PLAY" == "" ]]
     then
-        echo usage: tjans playbook ssh_pwd_name vault_pwd_name --extra --args
+        echo "usage: tjans (playbook) [options]..."
         return
     fi
 
-    if [[ "$2" != "" ]] && [[ "$2" != "-" ]]
+    if [[ "$PLAY" != "-h"* ]]
     then
-        SSH_PASS_NAME="$2"
-    else
-        SSH_PASS_NAME=""
+        shift
     fi
+
+    other_args=()
+
+    while [[ $# -gt 0 ]]
+    do
+        case $1 in
+            -h | --help)
+                echo "usage: tjans (playbook) [options]..."
+                return
+                ;;
+            -p | --pass)
+                SSH_PASS_NAME="$2"
+                shift
+                shift
+                ;;
+            -v | --vault | --vault-pass)
+                VAULT_PASS_NAME="$2"
+                shift
+                shift
+                ;;
+            -u | --user)
+                CONNECT_USER="$2"
+                shift
+                shift
+                ;;
+            -f | --forks)
+                NUM_FORKS="$2"
+                shift
+                shift
+                ;;
+            -* | --*)
+                other_args+=("$1")
+                shift
+                ;;
+            *)
+                other_args+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+    set -- "${other_args[@]}"
+
     export SSHPASS=$(raw-passcard "$SSH_PASS_NAME")
 
-    if [[ "$3" != "" ]] && [[ "$3" != "-" ]]
-    then
-        VAULT_PASS_NAME="$3"
-    else
-        VAULT_PASS_NAME="ansible"
-    fi
     export VAULTPASS=$(raw-passcard "$VAULT_PASS_NAME"_vault)
     echo "#!/bin/bash" > "$TEMP_FILE"
     echo 'echo $VAULTPASS' >> "$TEMP_FILE"
     chmod +x "$TEMP_FILE"
 
-    echo RUNNING COMMAND: "\n"    ansible-playbook "$ANSIBLE_DIR"/"$1".yml -i "$ANSIBLE_DIR"/hosts -f "$NUM_FORKS" -u "$CONNECT_USER" "${@:4}"
+    echo RUNNING COMMAND: "\n"    ansible-playbook "$ANSIBLE_DIR"/"$PLAY".yml -i "$ANSIBLE_DIR"/hosts -f "$NUM_FORKS" -u "$CONNECT_USER" "$@"
     git -C "$ANSIBLE_DIR" pull
-    ansible-playbook "$ANSIBLE_DIR"/"$1".yml -i "$ANSIBLE_DIR"/hosts -e "pass=$SSHPASS" --vault-password-file "$TEMP_FILE" -f "$NUM_FORKS" -u "$CONNECT_USER" "${@:4}"
+    ansible-playbook "$ANSIBLE_DIR"/"$PLAY".yml -i "$ANSIBLE_DIR"/hosts -e "ansible_password=$SSHPASS" --vault-password-file "$TEMP_FILE" -f "$NUM_FORKS" -u "$CONNECT_USER" "$@"
 }
 
 # Quickly deploy tin using the ansible playbook
 deploy-tin() {
-    tjans tin tin tin -t tin-django
+    tjans tin -p tin -v tin -t tin-django
 }
 
 # DEPRECATED: Connect to the tjCSL's openvpn server
