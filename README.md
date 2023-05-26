@@ -1,3 +1,3 @@
-# Aliases
-A collection of aliases I use to improve my terminal efficiency
-                                                                                                                                                        
+# Shell
+
+A bunch of shell configuration files I use to improve my terminal efficiency
