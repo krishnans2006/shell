@@ -168,7 +168,7 @@ tjssh() {
     then
         if [ -e "$PASSCARD_DIR"/passwords/"$INPUT".txt.gpg ]
         then
-            export SSHPASS=$(raw-passcard "$INPUT")
+            export SSHPASS=$(gpg -d "$PASSCARD_DIR"/passwords/"$INPUT".txt.gpg 2>/dev/null)
             if [[ "$SSHPASS" != "" ]]
             then
                 echo Found passcard! SSHing...
@@ -184,7 +184,7 @@ tjssh() {
             then
                 if [ -e "$PASSCARD_DIR"/passwords/"$PASSCARD_NAME".txt.gpg ]
                 then
-                    export SSHPASS=$(raw-passcard "$PASSCARD_NAME")
+                    export SSHPASS=$(gpg -d "$PASSCARD_DIR"/passwords/"$PASSCARD_NAME".txt.gpg 2>/dev/null)
                     if [[ "$SSHPASS" != "" ]]
                     then
                         echo Found passcard! SSHing...
